@@ -1,0 +1,50 @@
+{{each plugins}}
+{{if $index%3 == 0}}<div class="row mb-1">{{/if}}
+    <div class="col-sm-4"> 
+        <div class="media p-2 mb-3" style="box-shadow: 0 0 .6rem .5rem rgba(0,0,0,.15)!important">
+            <img class="align-self-start mr-3" src="{{$value.icon}}" alt="icon" width="100" height="100">
+            <div class="media-body">
+                <h5 class="card-title">{{$value.name}}</h5>
+                <div class="card-text" style="height: 50px;overflow: hidden;">{{#$value.describe}}</div>
+                <button class="showDetail btn btn-outline-primary">详细信息</button>
+                <div class='version d-none'>{{$value.version}}</div>
+                <div class='detail d-none'>{{#$value.detail}}
+                <footer class='date blockquote-footer text-right mt-2'>{{$value.auther}}
+                        {{($value.email == null || $value.email == '') ? '' : '#' + $value.email}}</footer>
+                </div>
+                <!-- <button class="btn btn-outline-danger">删除</button> -->
+            </div>
+        </div>
+    </div>
+{{if $index%3 == 2}}</div>{{/if}}
+{{/each}}
+<div class="modal fade" id="pluginDetail" tabindex="-1" role="dialog" aria-labelledby="pluginDetail" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pluginDetail"></h5>
+                <button type="button" class="close" aria-label="Close"
+                    onclick="$(this).parents('#pluginDetail').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    onclick="$(this).parents('#pluginDetail').modal('hide')">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('.showDetail').click(function () {
+        let name = $(this).prevAll('h5').html();
+        let version = $(this).nextAll('.version').html();
+        let detail = $(this).nextAll('.detail').html();
+        $('#pluginDetail').find('.modal-title').html(`${name}(<span class='text-muted'>${version}</span>)`);
+        $('#pluginDetail').find('.modal-body').html(detail);
+        $('#pluginDetail').modal('show');
+    })
+</script>

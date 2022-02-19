@@ -1,0 +1,11 @@
+{
+    "name": "插件名称/必填",
+    "auther": "作者/必填",
+    "email": "邮箱",
+    "icon": "可直接访问的url",
+    "describe": "简单的描述/必填",
+    "detail": "详细信息",
+    "version": "版本号：如V1.0.0",
+    "remarks": "备注",
+    "password": "用于删除的密码"
+}

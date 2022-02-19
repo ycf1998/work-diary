@@ -1,0 +1,306 @@
+<html>
+
+<head>
+	<link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+	<title>打工日记</title>
+	<link rel="icon" href="./public/favicon.ico" type="image/x-icon" />
+	<style>
+		.container {
+			margin-bottom: 10px;
+		}
+		/** 统计行标签*/
+		.nav-tabs {
+			border-bottom: 1px solid green;
+		}
+
+		.nav-tabs .nav-item.show .nav-link,
+		.nav-tabs .nav-link.active {
+			border-color: green green #fff;
+		}
+
+		#worker {
+			border: none;
+			border-bottom: 1px solid black;
+			width: 220px;
+			padding: 0px 20px;
+		}
+
+		.addType {
+			width: 35px;
+			height: 25px;
+			line-height: 1px;
+			font-size: 14px;
+			margin-top: 40px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1 class="display-4"><input id="worker" type="text" value="小叶" />的打工日记<span class="text-muted"
+				style="font-size:16px">又是为公司奋斗的一天</span></h1>
+		<!-- 当天统计行/操作行 -->
+		<div class="row m-2">
+			<div class="col text-left pt-2">
+				<p class="font-weight-bold d-inline">昨日：
+					<span class="reduce">-</span>
+					<span id="yesterday" class="badge badge-secondary badge-danger">0</span>
+					<span class="add">+</span>
+				</p>
+				<p class="font-weight-bold d-inline">今日新增：
+					<span class="reduce">-</span>
+					<span id="todayAdd" class="badge badge-secondary badge-warning">0</span>
+					<span class="add">+</span>
+				</p>
+				<p class="font-weight-bold d-inline">今日解决：
+					<span class="reduce">-</span>
+					<span id="todayResolve" class="badge badge-secondary badge-success">0</span>
+					<span class="add">+</span>
+				</p>
+			</div>
+			<div class="col text-right">
+				<button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal"
+					data-target="#reportModal">打工</button>
+				<button id="settle" type="button" class="btn btn-outline-info btn-sm">整理日记</button>
+				<button id="history" type="button" class="btn btn-outline-success btn-sm">血泪史</button>
+			</div>
+		</div>
+		<!-- 主内容 -->
+		<div class="jumbotron jumbotron overflow-auto p-2"
+			style="height: 535px;margin-bottom: 1rem;background: #baccd9;">
+			<ul id="main-list" class="list-group">
+
+			</ul>
+		</div>
+	</div>
+	<!-- 项目统计 -->
+	<div class="container">
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" id="month-tab" data-toggle="tab" href="#month" role="tab"
+					aria-controls="month" aria-selected="true">本月</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="all-tab" data-toggle="tab" href="#all" role="tab" aria-controls="all"
+					aria-selected="false">总计</a>
+			</li>
+		</ul>
+		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade show active" id="month" role="tabpanel" aria-labelledby="month-tab">
+				<div class="row mt-2">
+
+				</div>
+			</div>
+			<div class="tab-pane fade" id="all" role="tabpanel" aria-labelledby="all-tab">
+				<div class="row mt-2">
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 打工模态框 -->
+	<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalTitle" aria-hidden="true"
+		style="display: none;">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modelCenterTitle">打一次工</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<!-- 表单 -->
+					<form id="reportForm">
+						<div class="form-row">
+							<div class="form-group col-md-6">
+								<label for="title">项目名</label>
+								<input type="text" class="form-control" name="name">
+							</div>
+							<div class="form-group col-md-5">
+								<label for="title">类型</label>
+								<select class="form-control" name="type">
+									<option value="needs">需求</option>
+									<option value="task">任务</option>
+									<option value="bug">Bug</option>
+									<option value="other">其他</option>
+								</select>
+							</div>
+							<div class="form-group col-md-1">
+								<button type="button" class="addType btn btn-sm btn-success"
+									addType="1">今</button>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="content">打工内容</label>
+							<textarea class="form-control" id="content" rows="3" name="content"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="remarks">补充详情</label>
+							<textarea class="form-control" id="detail" rows="3" name="detail"></textarea>
+							<small id="detailHelp" class="form-text text-muted">解决方式或者思路等</small>
+						</div>
+						<div class="form-group">
+							<label for="title">备注</label>
+							<input type="text" class="form-control" name="remarks">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">不打了</button>
+					<button id="report" type="button" class="btn btn-primary">打工</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 修改模态框 -->
+	<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalTitle" aria-hidden="true"
+		style="display: none;">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modelCenterTitle">修改</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<!-- 表单 -->
+					<form id="editForm">
+						<input type="hidden" name="id" value="">
+						<div class="form-row">
+							<div class="form-group col-md-6">
+								<label for="title">项目名</label>
+								<input readonly type="text" class="form-control-plaintext" name="name">
+							</div>
+							<div class="form-group col-md-5">
+								<label for="title">类型</label>
+								<select class="form-control" name="type">
+									<option value="needs">需求</option>
+									<option value="task">任务</option>
+									<option value="bug">Bug</option>
+									<option value="other">其他</option>
+								</select>
+							</div>
+							<div class="form-group col-md-1">
+								<button type="button" class="addType btn btn-sm btn-success"
+									addType="1">今</button>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="content">打工内容</label>
+							<textarea class="form-control" rows="3" name="content"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="remarks">补充详情</label>
+							<textarea class="form-control" rows="3" name="detail"></textarea>
+							<small class="form-text text-muted">解决方式或者思路等</small>
+						</div>
+						<div class="form-group">
+							<label for="title">备注</label>
+							<input type="text" class="form-control" name="remarks">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">不改了</button>
+					<button id="edit" type="button" class="btn btn-primary">修改</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 整理模态框 -->
+	<div class="modal fade" id="settleModal" tabindex="-1" role="dialog" aria-labelledby="settleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="settleModalLabel">整理</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<textarea class="form-control" id="worksText" style="height: 680px"></textarea>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button id="copy" type="button" class="btn btn-primary">复制</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 工具栏 -->
+	<div id="tools" style="position:fixed;right: 10px;top: 5px;">
+		<div id="pluginBtn" class="spinner-border" role="status">
+			<span class="sr-only">加载中Loading...</span>
+		</div>
+	</div>
+	<!-- 插件中心 -->
+	<div class="modal fade" id="pluginCenter" tabindex="-2" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="pluginCenterTitle">插件中心</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- 插件列表 -->
+				<div id="pluginList" class="modal-body">
+					暂无插件
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" data-toggle="modal"
+						data-target="#addPlugin">添加</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 上传框 -->
+	<div id="addPlugin" class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">上传插件</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<div class="custom-file">
+							<input type="file" class="custom-file-input" id="pluginInfo" accept="application/json">
+							<label class="custom-file-label" for="pluginInfo">插件信息（.json）</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="custom-file">
+							<input type="file" class="custom-file-input" id="pluginFile"
+								accept="text/javascript, application/javascript">
+							<label class="custom-file-label" for="pluginFile">插件文件（.js）</label>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button id="uploadHelp" type="button" class="btn btn-outline-info">help</button>
+					<button id="upload" type="button" class="btn btn-primary">
+						<div class="spinner-border text-light" role="status"
+							style="width: 1em;height: 1em;display: none;">
+							<span class="sr-only">Loading...</span>
+						</div>上传
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- auther -->
+	<p class="h5 text-muted" style="position:fixed;right: 10px;bottom: 0;">@Money</p>
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="./public/js/index.js"></script>
+<!-- plugin -->
+<script src="./public/plugin/index.js"></script>
+</html>
